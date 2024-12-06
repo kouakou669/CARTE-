@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu de Mémoire - Thomas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 28px; /* Taille réduite */
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        .level {
+            margin-bottom: 20px;
+        }
+
+        select, button {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            margin: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        select:focus, button:focus {
+            outline: none;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .score, .message, .timer {
+            font-size: 18px; /* Taille réduite */
+            margin: 10px 0;
+        }
+
+        .game-board {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            width: 80px; /* Taille réduite */
+            height: 80px; /* Taille réduite */
+            background-color: #4CAF50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 20px; /* Taille réduite */
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .card.flipped {
+            background-color: #fff;
+            color: #000;
+        }
+
+        .card.matched {
+            background-color: #2196F3;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Bienvenue dans le Jeu de Mémoire de Thomas</h1>
+    <div class="level">
+        Niveau: 
+        <select id="levelSelect">
+            <option value="easy">Facile (2 minutes)</option>
+            <option value="medium">Moyen (3 minutes)</option>
+            <option value="hard">Difficile (5 minutes)</option>
+        </select>
+        <button id="startButton">Commencer</button>
+    </div>
+    <div class="timer">Temps restant: <span id="timer">0</span> secondes</div>
+    <div class="score">Score: <span id="score">0</span></div>
+    <div class="game-board" id="gameBoard"></div>
+    <div class="message" id="message"></div>
+    
+    <script>
+        let cards = [];
+        let cardValues = [];
+        let cardIds = [];
+        let matchedCards = [];
+        let score = 0;
+        let timer;
+        let timeLimit;
+
+        const levelConfigurations = {
+            easy: { pairs: 8, grid: 4, time: 120 },
+            medium: { pairs: 12, grid: 4, time: 180 },
+            hard: { pairs: 16, grid: 4, time: 300 }
+        };
+
+        function startGame() {
+            const selectedLevel = document.getElementById('levelSelect').value;
+            const { pairs, time } = levelConfigurations[selectedLevel];
+            cards = generateCards(pairs);
+            resetGame();
+            createBoard();
+            document.getElementById('message').textContent = '';
+
+            // Start the timer
+            timeLimit = time;
+            document.getElementById('timer').textContent = timeLimit;
+            startTimer();
+            showCards();
+        }
+
+        function generateCards(pairs) {
+            const values = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').slice(0, pairs);
+            return [...values, ...values].sort(() => Math.random() - 0.5);
+        }
+
+        function resetGame() {
+            cardValues = [];
+            cardIds = [];
+            matchedCards = [];
+            score = 0;
+            document.getElementById('score').textContent = score;
+            document.getElementById('gameBoard').innerHTML = '';
+            clearInterval(timer);
+        }
+
+        function createBoard() {
+            const gameBoard = document.getElementById('gameBoard');
+            const { grid } = levelConfigurations[document.getElementById('levelSelect').value];
+            gameBoard.style.gridTemplateColumns = `repeat(${grid}, 80px)`; // Ajusté la taille des cartes
+
+            cards.forEach((value, index) => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.setAttribute('data-id', index);
+                card.addEventListener('click', flipCard);
+                gameBoard.appendChild(card);
+            });
+        }
+
+        function showCards() {
+            const cardsElements = document.querySelectorAll('.card');
+            cardsElements.forEach((card, index) => {
+                card.textContent = cards[index];
+                card.classList.add('flipped');
+            });
+            setTimeout(hideCards, 2000);
+        }
+
+        function hideCards() {
+            const cardsElements = document.querySelectorAll('.card');
+            cardsElements.forEach(card => {
+                card.textContent = '';
+                card.classList.remove('flipped');
+            });
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLimit--;
+                document.getElementById('timer').textContent = timeLimit;
+
+                if (timeLimit <= 0) {
+                    endGame(false);
+                }
+            }, 1000);
+        }
+
+        function flipCard() {
+            const selectedCard = this;
+            const cardId = selectedCard.getAttribute('data-id');
+
+            if (cardIds.length < 2 && !matchedCards.includes(cardId) && !cardValues.includes(cardId)) {
+                selectedCard.textContent = cards[cardId];
+                selectedCard.classList.add('flipped');
+                cardValues.push(cards[cardId]);
+                cardIds.push(cardId);
+
+                if (cardValues.length === 2) {
+                    setTimeout(checkMatch, 1000);
+                }
+
+                // Pour le niveau difficile, mélangez les cartes au clic
+                if (document.getElementById('levelSelect').value === 'hard') {
+                    shuffleCards();
+                }
+            }
+        }
+
+        function checkMatch() {
+            const cardsElements = document.querySelectorAll('.card');
+            const [firstId, secondId] = cardIds;
+
+            if (cardValues[0] === cardValues[1]) {
+                matchedCards.push(firstId, secondId);
+                cardsElements[firstId].classList.add('matched');
+                cardsElements[secondId].classList.add('matched');
+                score += 10; // Increment score for a match
+                document.getElementById('score').textContent = Math.min(score, 100); // Max score 100
+
+                if (matchedCards.length === cards.length) {
+                    endGame(true);
+                }
+            } else {
+                cardsElements[firstId].textContent = '';
+                cardsElements[secondId].textContent = '';
+                cardsElements[firstId].classList.remove('flipped');
+                cardsElements[secondId].classList.remove('flipped');
+            }
+
+            cardValues = [];
+            cardIds = [];
+        }
+
+        function shuffleCards() {
+            cards = cards.sort(() => Math.random() - 0.5);
+            const cardsElements = document.querySelectorAll('.card');
+            cardsElements.forEach((card, index) => {
+                card.textContent = cards[index];
+            });
+        }
+
+        function endGame(isWin) {
+            const messageElement = document.getElementById('message');
+            clearInterval(timer);
+            if (isWin) {
+                messageElement.textContent = `Bravo! Vous avez gagné avec un score de ${Math.min(score, 100)} !`;
+            } else {
+                messageElement.textContent = `Temps écoulé! Votre score est ${Math.min(score, 100)}.`;
+            }
+            // Disable all cards
+            document.querySelectorAll('.card').forEach(card => {
+                card.removeEventListener('click', flipCard);
+            });
+
+            // Ajoutez un bouton pour recommencer le jeu
+            const restartButton = document.createElement('button');
+            restartButton.textContent = "Recommencer";
+            restartButton.onclick = () => {
+                startGame();
+                document.body.removeChild(restartButton);
+            };
+            document.body.appendChild(restartButton);
+        }
+
+        document.getElementById('startButton').addEventListener('click', startGame);
+    </script>
+</body>
+</html>
