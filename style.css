@@ -175,3 +175,27 @@ button:hover {
         font-size: 18px;
     }
 }
+
+
+.warning {
+    background-color: #ffcc00; /* Couleur de fond jaune */
+    color: #333; /* Couleur du texte */
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    margin: 20px 0;
+    transition: opacity 0.5s ease;
+}
+
+.warning.hidden {
+    opacity: 0;
+    pointer-events: none; /* Désactive les interactions lorsque caché */
+}
+
+.warning h2 {
+    margin: 0 0 10px;
+}
+
+.warning p {
+    margin: 5px 0;
+}
