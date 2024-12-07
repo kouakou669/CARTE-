@@ -21,9 +21,9 @@
             <li>Si les cartes sont différentes, elles se retournent après 1 seconde.</li>
             <li>Trois niveaux disponibles :
                 <ul>
-                    <li>Facile : 8 paires, 2 minutes</li>
-                    <li>Moyen : 12 paires, 3 minutes</li>
-                    <li>Difficile : 16 paires, 5 minutes (les cartes se mélangent à chaque clic !)</li>
+                    <li>Facile : 8 paires, 1 minute</li>
+                    <li>Moyen : 12 paires, 1 minute 30</li>
+                    <li>Difficile : 16 paires, 2 minutes 30 (les cartes se mélangent à chaque clic !)</li>
                 </ul>
             </li>
             <li>Le jeu se termine quand toutes les paires sont trouvées ou que le temps est écoulé.</li>
@@ -31,13 +31,19 @@
         </ul>
     </div>
 
+    <div class="warning hidden" id="warningSection">
+        <h2>Avertissement</h2>
+        <p>Ce jeu nécessite une attention rapide et une bonne mémoire. Veuillez jouer dans un environnement calme pour vous concentrer.</p>
+        <p>Cliquez sur "Commencer" pour débuter le jeu.</p>
+    </div>
+
     <div class="game-container">
         <div class="level">
             Niveau: 
             <select id="levelSelect">
-                <option value="easy">Facile (2 minutes)</option>
-                <option value="medium">Moyen (3 minutes)</option>
-                <option value="hard">Difficile (5 minutes)</option>
+                <option value="easy">Facile (1 minute)</option>
+                <option value="medium">Moyen (1 minute 30)</option>
+                <option value="hard">Difficile (2 minutes 30)</option>
             </select>
             <button id="startButton">Commencer</button>
         </div>
