@@ -7,11 +7,10 @@ let timer;
 let timeLimit;
 let gameStarted = false;
 
-// Durées réduites pour les niveaux
 const levelConfigurations = {
-    easy: { pairs: 8, grid: 4, time: 60 },  // 1 minute
-    medium: { pairs: 12, grid: 4, time: 90 }, // 1 minute 30
-    hard: { pairs: 16, grid: 4, time: 150 }  // 2 minutes 30
+    easy: { pairs: 8, grid: 4, time: 120 },
+    medium: { pairs: 12, grid: 4, time: 180 },
+    hard: { pairs: 16, grid: 4, time: 300 }
 };
 
 function startGame() {
@@ -178,3 +177,32 @@ document.getElementById('toggleRules').addEventListener('click', function() {
     const rulesSection = document.getElementById('rulesSection');
     rulesSection.classList.toggle('hidden');
 });
+
+
+function startGame() {
+    // Afficher l'avertissement
+    document.getElementById('warningSection').classList.remove('hidden');
+
+    if (gameStarted) {
+        if (!confirm("Voulez-vous vraiment recommencer le jeu ?")) {
+            return;
+        }
+    }
+
+    // Démarrer le jeu après un délai pour lire l'avertissement
+    setTimeout(() => {
+        document.getElementById('warningSection').classList.add('hidden');
+        gameStarted = true;
+        const selectedLevel = document.getElementById('levelSelect').value;
+        const { pairs, time } = levelConfigurations[selectedLevel];
+        cards = generateCards(pairs);
+        resetGame();
+        createBoard();
+        document.getElementById('message').textContent = '';
+
+        timeLimit = time;
+        document.getElementById('timer').textContent = timeLimit;
+        startTimer();
+        showCards();
+    }, 7000); // Temps pour lire l'avertissement (3 secondes)
+}
