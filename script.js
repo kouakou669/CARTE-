@@ -7,10 +7,11 @@ let timer;
 let timeLimit;
 let gameStarted = false;
 
+// Durées réduites pour les niveaux
 const levelConfigurations = {
-    easy: { pairs: 8, grid: 4, time: 120 },
-    medium: { pairs: 12, grid: 4, time: 180 },
-    hard: { pairs: 16, grid: 4, time: 300 }
+    easy: { pairs: 8, grid: 4, time: 60 },  // 1 minute
+    medium: { pairs: 12, grid: 4, time: 90 }, // 1 minute 30
+    hard: { pairs: 16, grid: 4, time: 150 }  // 2 minutes 30
 };
 
 function startGame() {
