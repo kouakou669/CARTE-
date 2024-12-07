@@ -342,10 +342,6 @@
                 if (cardValues.length === 2) {
                     setTimeout(checkMatch, 1000);
                 }
-
-                if (document.getElementById('levelSelect').value === 'hard') {
-                    setTimeout(shuffleCards, 1100);
-                }
             }
         }
 
@@ -364,24 +360,33 @@
                     endGame(true);
                 }
             } else {
-                cardsElements[firstId].classList.remove('flipped');
-                cardsElements[secondId].classList.remove('flipped');
+                // Les cartes ne correspondent pas
+                setTimeout(() => {
+                    cardsElements[firstId].classList.remove('flipped');
+                    cardsElements[secondId].classList.remove('flipped');
+
+                    // Changer la position des lettres en mode difficile
+                    if (document.getElementById('levelSelect').value === 'hard') {
+                        swapCards(firstId, secondId);
+                    }
+                }, 1000);
             }
 
             cardValues = [];
             cardIds = [];
         }
 
-        function shuffleCards() {
-            const unmatchedCards = cards.map((card, index) => ({card, index}))
-                                      .filter(({index}) => !matchedCards.includes(index.toString()));
-            const shuffled = unmatchedCards.sort(() => Math.random() - 0.5);
-            
-            unmatchedCards.forEach(({card}, i) => {
-                cards[unmatchedCards[i].index] = shuffled[i].card;
-                const cardElement = document.querySelector(`[data-id="${unmatchedCards[i].index}"]`);
-                cardElement.querySelector('.back').textContent = shuffled[i].card;
-            });
+        function swapCards(firstId, secondId) {
+            const cardsElements = document.querySelectorAll('.card');
+            const tempValue = cards[firstId];
+
+            // Échange des valeurs
+            cards[firstId] = cards[secondId];
+            cards[secondId] = tempValue;
+
+            // Mise à jour de l'affichage
+            cardsElements[firstId].querySelector('.back').textContent = cards[firstId];
+            cardsElements[secondId].querySelector('.back').textContent = cards[secondId];
         }
 
         function endGame(isWin) {
