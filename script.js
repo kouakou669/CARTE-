@@ -14,7 +14,6 @@ const levelConfigurations = {
 };
 
 function startGame() {
-    // Afficher l'avertissement
     document.getElementById('warningSection').classList.remove('hidden');
 
     if (gameStarted) {
@@ -75,6 +74,7 @@ function createBoard() {
         
         card.appendChild(front);
         card.appendChild(back);
+        card.addEventListener('click', flipCard); // Ajout de l'événement ici
         gameBoard.appendChild(card);
     });
 }
@@ -104,12 +104,6 @@ function startTimer() {
         }
     }, 1000);
 }
-
-document.getElementById('gameBoard').addEventListener('click', function(event) {
-    if (event.target.classList.contains('card')) {
-        flipCard.call(event.target);
-    }
-});
 
 function flipCard() {
     const cardId = this.getAttribute('data-id');
