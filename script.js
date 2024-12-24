@@ -14,24 +14,31 @@ const levelConfigurations = {
 };
 
 function startGame() {
+    // Afficher l'avertissement
+    document.getElementById('warningSection').classList.remove('hidden');
+
     if (gameStarted) {
         if (!confirm("Voulez-vous vraiment recommencer le jeu ?")) {
             return;
         }
     }
-    
-    gameStarted = true;
-    const selectedLevel = document.getElementById('levelSelect').value;
-    const { pairs, time } = levelConfigurations[selectedLevel];
-    cards = generateCards(pairs);
-    resetGame();
-    createBoard();
-    document.getElementById('message').textContent = '';
 
-    timeLimit = time;
-    document.getElementById('timer').textContent = timeLimit;
-    startTimer();
-    showCards();
+    // Démarrer le jeu après un délai pour lire l'avertissement
+    setTimeout(() => {
+        document.getElementById('warningSection').classList.add('hidden');
+        gameStarted = true;
+        const selectedLevel = document.getElementById('levelSelect').value;
+        const { pairs, time } = levelConfigurations[selectedLevel];
+        cards = generateCards(pairs);
+        resetGame();
+        createBoard();
+        document.getElementById('message').textContent = '';
+
+        timeLimit = time;
+        document.getElementById('timer').textContent = timeLimit;
+        startTimer();
+        showCards();
+    }, 3000); // Temps pour lire l'avertissement (3 secondes)
 }
 
 function generateCards(pairs) {
@@ -68,7 +75,6 @@ function createBoard() {
         
         card.appendChild(front);
         card.appendChild(back);
-        card.addEventListener('click', flipCard);
         gameBoard.appendChild(card);
     });
 }
@@ -98,6 +104,12 @@ function startTimer() {
         }
     }, 1000);
 }
+
+document.getElementById('gameBoard').addEventListener('click', function(event) {
+    if (event.target.classList.contains('card')) {
+        flipCard.call(event.target);
+    }
+});
 
 function flipCard() {
     const cardId = this.getAttribute('data-id');
@@ -177,32 +189,3 @@ document.getElementById('toggleRules').addEventListener('click', function() {
     const rulesSection = document.getElementById('rulesSection');
     rulesSection.classList.toggle('hidden');
 });
-
-
-function startGame() {
-    // Afficher l'avertissement
-    document.getElementById('warningSection').classList.remove('hidden');
-
-    if (gameStarted) {
-        if (!confirm("Voulez-vous vraiment recommencer le jeu ?")) {
-            return;
-        }
-    }
-
-    // Démarrer le jeu après un délai pour lire l'avertissement
-    setTimeout(() => {
-        document.getElementById('warningSection').classList.add('hidden');
-        gameStarted = true;
-        const selectedLevel = document.getElementById('levelSelect').value;
-        const { pairs, time } = levelConfigurations[selectedLevel];
-        cards = generateCards(pairs);
-        resetGame();
-        createBoard();
-        document.getElementById('message').textContent = '';
-
-        timeLimit = time;
-        document.getElementById('timer').textContent = timeLimit;
-        startTimer();
-        showCards();
-    }, 7000); // Temps pour lire l'avertissement (3 secondes)
-}
