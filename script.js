@@ -6,6 +6,7 @@ let score = 0;
 let timer;
 let timeLimit;
 let gameStarted = false;
+let highScores = [];
 
 const levelConfigurations = {
     easy: { pairs: 8, grid: 4, time: 120 },
@@ -13,7 +14,14 @@ const levelConfigurations = {
     hard: { pairs: 16, grid: 4, time: 300 }
 };
 
+const themes = {
+    letters: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+    animals: '🐶🐱🐭🐹🐰🐻🐼🐯🐨🐸',
+    fruits: '🍎🍌🍒🍇🍉🍊🍍🍑🍓🍈'
+};
+
 function startGame() {
+    // Afficher l'avertissement
     document.getElementById('warningSection').classList.remove('hidden');
 
     if (gameStarted) {
@@ -27,8 +35,9 @@ function startGame() {
         document.getElementById('warningSection').classList.add('hidden');
         gameStarted = true;
         const selectedLevel = document.getElementById('levelSelect').value;
+        const selectedTheme = document.getElementById('themeSelect').value;
         const { pairs, time } = levelConfigurations[selectedLevel];
-        cards = generateCards(pairs);
+        cards = generateCards(pairs, selectedTheme);
         resetGame();
         createBoard();
         document.getElementById('message').textContent = '';
@@ -40,8 +49,8 @@ function startGame() {
     }, 3000); // Temps pour lire l'avertissement (3 secondes)
 }
 
-function generateCards(pairs) {
-    const values = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').slice(0, pairs);
+function generateCards(pairs, theme) {
+    const values = themes[theme].split('').slice(0, pairs);
     return [...values, ...values].sort(() => Math.random() - 0.5);
 }
 
@@ -74,7 +83,7 @@ function createBoard() {
         
         card.appendChild(front);
         card.appendChild(back);
-        card.addEventListener('click', flipCard); // Ajout de l'événement ici
+        card.addEventListener('click', flipCard);
         gameBoard.appendChild(card);
     });
 }
@@ -99,6 +108,10 @@ function startTimer() {
         timeLimit--;
         document.getElementById('timer').textContent = timeLimit;
 
+        if (timeLimit <= 10) {
+            document.getElementById('timer').classList.add('urgent');
+        }
+
         if (timeLimit <= 0) {
             endGame(false);
         }
@@ -107,8 +120,10 @@ function startTimer() {
 
 function flipCard() {
     const cardId = this.getAttribute('data-id');
+    const flipSound = document.getElementById('flipSound');
 
     if (cardIds.length < 2 && !matchedCards.includes(cardId) && !cardValues.includes(cardId)) {
+        flipSound.play();
         this.classList.add('flipped');
         cardValues.push(cards[cardId]);
         cardIds.push(cardId);
@@ -129,17 +144,17 @@ function checkMatch() {
         cardsElements[secondId].classList.add('matched');
         score += 10;
         document.getElementById('score').textContent = Math.min(score, 100);
+        
+        const matchSound = document.getElementById('matchSound');
+        matchSound.play();
 
         if (matchedCards.length === cards.length) {
             endGame(true);
         }
     } else {
-        // Les cartes ne correspondent pas
         setTimeout(() => {
             cardsElements[firstId].classList.remove('flipped');
             cardsElements[secondId].classList.remove('flipped');
-
-            // Changer la position des lettres en mode difficile
             if (document.getElementById('levelSelect').value === 'hard') {
                 swapCards(firstId, secondId);
             }
@@ -153,8 +168,6 @@ function checkMatch() {
 function swapCards(firstId, secondId) {
     const cardsElements = document.querySelectorAll('.card');
     const tempValue = cards[firstId];
-
-    // Échange des valeurs
     cards[firstId] = cards[secondId];
     cards[secondId] = tempValue;
 
@@ -167,8 +180,11 @@ function endGame(isWin) {
     gameStarted = false;
     const messageElement = document.getElementById('message');
     clearInterval(timer);
+
     if (isWin) {
         messageElement.textContent = `Bravo ! Vous avez gagné avec un score de ${Math.min(score, 100)} points !`;
+        highScores.push(Math.min(score, 100));
+        updateScoreBoard();
     } else {
         messageElement.textContent = `Temps écoulé ! Votre score final est de ${Math.min(score, 100)} points.`;
     }
@@ -178,8 +194,30 @@ function endGame(isWin) {
     });
 }
 
+function updateScoreBoard() {
+    const scoreBoard = document.getElementById('scoreBoard');
+    scoreBoard.innerHTML = '';
+    highScores.sort((a, b) => b - a); // Tri décroissant
+
+    highScores.slice(0, 5).forEach(score => {
+        const scoreItem = document.createElement('li');
+        scoreItem.textContent = score;
+        scoreBoard.appendChild(scoreItem);
+    });
+}
+
 document.getElementById('startButton').addEventListener('click', startGame);
 document.getElementById('toggleRules').addEventListener('click', function() {
     const rulesSection = document.getElementById('rulesSection');
     rulesSection.classList.toggle('hidden');
+});
+
+// Fonctionnalité Pause
+document.getElementById('pauseButton').addEventListener('click', function() {
+    if (gameStarted) {
+        clearInterval(timer);
+        gameStarted = false;
+        this.classList.add('hidden');
+        document.getElementById('message').textContent = 'Jeu en pause. Cliquez sur "Commencer" pour reprendre.';
+    }
 });
