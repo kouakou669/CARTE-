@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jeu de Mémoire - Thomas</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <h1>Bienvenue dans le Jeu de Mémoire de Thomas</h1>
-    
+
     <button class="toggle-rules" id="toggleRules">Afficher/Masquer les règles</button>
-    
+
     <div class="rules hidden" id="rulesSection">
         <h2>Règles du jeu</h2>
         <ul>
@@ -45,7 +45,14 @@
                 <option value="medium">Moyen (1 minute 30)</option>
                 <option value="hard">Difficile (2 minutes 30)</option>
             </select>
+            Thème: 
+            <select id="themeSelect">
+                <option value="letters">Lettres</option>
+                <option value="animals">Animaux</option>
+                <option value="fruits">Fruits</option>
+            </select>
             <button id="startButton">Commencer</button>
+            <button id="pauseButton" class="hidden">Pause</button>
         </div>
 
         <div class="game-stats">
@@ -55,6 +62,14 @@
 
         <div class="game-board" id="gameBoard"></div>
         <div class="message" id="message"></div>
+    </div>
+
+    <audio id="flipSound" src="flip.mp3"></audio>
+    <audio id="matchSound" src="match.mp3"></audio>
+    
+    <div class="high-scores">
+        <h2>Meilleurs Scores</h2>
+        <ul id="scoreBoard"></ul>
     </div>
 
     <script src="script.js"></script>
