@@ -221,3 +221,12 @@ document.getElementById('pauseButton').addEventListener('click', function() {
         document.getElementById('message').textContent = 'Jeu en pause. Cliquez sur "Commencer" pour reprendre.';
     }
 });
+
+// Reprendre le jeu
+document.getElementById('startButton').addEventListener('click', function() {
+    if (!gameStarted) {
+        this.textContent = "Reprendre";
+        document.getElementById('pauseButton').classList.remove('hidden');
+        startGame();
+    }
+});
