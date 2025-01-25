@@ -30,247 +30,392 @@
             border-radius: 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(10px);
-            transform-style: preserve-3d;
-            perspective: 1000px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: shine 10s linear infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         h1 {
             color: #fff;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            font-size: 2.5em;
             animation: titleFloat 3s ease-in-out infinite;
+            position: relative;
         }
 
         @keyframes titleFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
         }
 
-        .number-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 15px;
+        .magic-stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: starTwinkle 1s infinite;
+        }
+
+        @keyframes starTwinkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        .instruction {
+            font-size: 1.3em;
             margin-bottom: 30px;
-            transform-style: preserve-3d;
-        }
-
-        .number {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            border-radius: 15px;
             padding: 20px;
-            font-size: 20px;
-            color: white;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            animation: pulse 2s infinite;
             position: relative;
             overflow: hidden;
         }
 
-        .number:before {
-            content: '';
+        .instruction::after {
+            content: '🌟';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            animation: rotateStar 3s linear infinite;
+        }
+
+        @keyframes rotateStar {
+            0% { transform: translateY(-50%) rotate(0deg); }
+            100% { transform: translateY(-50%) rotate(360deg); }
+        }
+
+        .numbers-container {
+            perspective: 1000px;
+            margin: 30px 0;
+        }
+
+        .numbers {
+            font-size: 1.4em;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+        }
+
+        .number {
+            padding: 10px;
             background: rgba(255, 255, 255, 0.1);
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
         }
 
         .number:hover {
-            transform: translateY(-5px) scale(1.1) rotateX(5deg);
-            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+            transform: translateZ(20px) scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        .number:hover:before {
-            transform: translateX(0);
+        .input-section {
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        input {
+            padding: 15px 25px;
+            font-size: 1.3em;
+            border: none;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-align: center;
+            width: 120px;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.3em;
+            border: none;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
+            transform: rotate(45deg);
+            transition: 0.5s;
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        button:hover::after {
+            transform: rotate(225deg);
         }
 
         .result {
-            font-size: 28px;
-            margin-top: 20px;
+            font-size: 1.5em;
+            margin-top: 30px;
             padding: 25px;
             border-radius: 15px;
             background: rgba(255, 255, 255, 0.2);
             display: none;
-            transform: translateY(20px);
-            opacity: 0;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
 
         .result.show {
-            transform: translateY(0);
-            opacity: 1;
+            display: block;
+            animation: resultReveal 1s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .animate {
-            animation: revealResult 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        @keyframes resultReveal {
+            0% { transform: translateY(50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
         }
 
-        @keyframes revealResult {
-            0% { transform: scale(0.8) rotate(-5deg); opacity: 0; }
-            50% { transform: scale(1.1) rotate(3deg); }
-            100% { transform: scale(1) rotate(0); opacity: 1; }
-        }
-
-        .reset-btn {
-            margin-top: 25px;
-            padding: 12px 30px;
-            background: rgba(255, 255, 255, 0.3);
-            border: none;
-            border-radius: 10px;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 18px;
-            transform: scale(0);
-        }
-
-        .reset-btn.show {
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-
-        @keyframes popIn {
-            from { transform: scale(0); }
-            to { transform: scale(1); }
-        }
-
-        .reset-btn:hover {
-            background: rgba(255, 255, 255, 0.4);
-            transform: scale(1.1);
-        }
-
-        .confetti {
+        .theme-toggle {
             position: absolute;
-            width: 10px;
-            height: 10px;
-            pointer-events: none;
+            top: 20px;
+            right: 20px;
+            padding: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(180deg);
+        }
+
+        @media (max-width: 600px) {
+            .numbers {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .instruction {
+                font-size: 1.1em;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>✨ Jeu de Personnalité Magique ✨</h1>
-        <div class="number-grid"></div>
-        <div class="result"></div>
-        <button class="reset-btn" style="display: none;">Rejouer 🎮</button>
+        <div class="magic-stars"></div>
+        <h1>✨ Jeu Mystique de Personnalité ✨</h1>
+        
+        <div class="instruction">
+            🎯 Ferme les yeux, respire profondément, et choisis un numéro entre 1 et 50 
+            avec ton intuition...<br>
+            Une réponse mystérieuse t'attend ! 
+        </div>
+
+        <div class="numbers-container">
+            <div class="numbers" id="numbersGrid"></div>
+        </div>
+
+        <div class="input-section">
+            <input type="number" min="1" max="50" placeholder="№" id="numberInput">
+            <button onclick="revealDestiny()">Découvrir mon destin 🔮</button>
+        </div>
+
+        <div class="result" id="result"></div>
     </div>
 
     <script>
+        // Création des étoiles magiques
+        function createStars() {
+            const starsContainer = document.querySelector('.magic-stars');
+            for(let i = 0; i < 20; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 3 + 2 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 2 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Création de la grille de numéros
+        function createNumbersGrid() {
+            const grid = document.getElementById('numbersGrid');
+            for(let i = 1; i <= 50; i++) {
+                const numberDiv = document.createElement('div');
+                numberDiv.className = 'number';
+                numberDiv.textContent = i;
+                numberDiv.onclick = () => selectNumber(i);
+                grid.appendChild(numberDiv);
+            }
+        }
+
         const responses = {
-            1: "Succès incroyable dans ta carrière",
-            2: "Mariage heureux avec l'amour de ta vie",
-            3: "Amitié sincère et durable",
-            4: "Réussite exceptionnelle au bac",
-            5: "Attraction magnétique naturelle",
-            6: "Grand amour passionné",
-            7: "Avenir brillant et prospère",
-            8: "Réussite académique extraordinaire",
-            9: "Fortune et abondance",
-            10: "Cœur en or et générosité infinie",
-            11: "Personnalité complexe et mystérieuse",
-            12: "Âme rebelle et passionnée",
-            13: "Charme irrésistible",
-            14: "Créativité débordante",
-            15: "Bonté et compassion naturelle",
-            16: "Esprit libre et aventureux",
-            17: "Amour profond et protecteur",
-            18: "Épicurien(ne) qui profite de la vie",
-            19: "Rêveur(se) inspiré(e)",
-            20: "Loyauté et fidélité exemplaire",
-            21: "Leader né(e)",
-            22: "Artiste dans l'âme",
-            23: "Voyageur(se) intrépide",
-            24: "Sage conseiller(ère)",
-            25: "Innovateur(trice) visionnaire",
-            26: "Âme charitable",
-            27: "Esprit brillant",
-            28: "Cœur romantique",
-            29: "Aventurier(ère) courageux(se)",
-            30: "Optimiste contagieux(se)"
+            1: "Succès extraordinaire dans tous tes projets ✨",
+            2: "Mariage heureux avec ton âme sœur 💑",
+            3: "Amitié profonde et sincère 🤝",
+            4: "Réussite académique exceptionnelle 📚",
+            5: "Charme magnétique naturel 💫",
+            6: "Amour passionné et durable ❤️",
+            7: "Avenir radieux et prospère 🌟",
+            8: "Excellence et reconnaissance 🏆",
+            9: "Richesse et abondance 💰",
+            10: "Cœur en or et générosité infinie 🎁",
+            11: "Force de caractère unique 💪",
+            12: "Énergie débordante 🌪️",
+            13: "Charisme irrésistible ✨",
+            14: "Créativité exceptionnelle 🎨",
+            15: "Bonté naturelle rayonnante 🌞",
+            16: "Esprit libre et aventureux 🦋",
+            17: "Amour protecteur et fidèle 🛡️",
+            18: "Joie de vivre contagieuse 😊",
+            19: "Rêveur inspiré et visionnaire 🌈",
+            20: "Fidélité exemplaire 🤝",
+            21: "Leader né et inspirant 👑",
+            22: "Talent artistique remarquable 🎭",
+            23: "Explorateur intrépide 🗺️",
+            24: "Sagesse profonde 🧠",
+            25: "Innovation et génie créatif 💡",
+            26: "Compassion infinie 🤲",
+            27: "Intelligence exceptionnelle 🎯",
+            28: "Romance passionnée 💘",
+            29: "Courage légendaire 🦁",
+            30: "Optimisme rayonnant ☀️",
+            31: "Succès financier 💎",
+            32: "Don pour la communication 🗣️",
+            33: "Équilibre parfait ⚖️",
+            34: "Chance extraordinaire 🍀",
+            35: "Talent musical unique 🎵",
+            36: "Intuition remarquable 🔮",
+            37: "Charme mystérieux ✨",
+            38: "Force tranquille 🌳",
+            39: "Âme artistique 🎨",
+            40: "Leadership naturel 👑",
+            41: "Esprit d'aventure 🌎",
+            42: "Sagesse ancestrale 📚",
+            43: "Don de guérison 💫",
+            44: "Protection divine 👼",
+            45: "Harmonie parfaite 🎭",
+            46: "Vision prophétique 👁️",
+            47: "Magnétisme personnel ⭐",
+            48: "Destinée exceptionnelle 🌟",
+            49: "Amour universel 💖",
+            50: "Transformation positive 🦋"
         };
 
-        function createConfetti(x, y) {
-            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
-            for (let i = 0; i < 50; i++) {
+        function selectNumber(num) {
+            document.getElementById('numberInput').value = num;
+            revealDestiny();
+        }
+
+        function revealDestiny() {
+            const input = document.getElementById('numberInput');
+            const result = document.getElementById('result');
+            const number = parseInt(input.value);
+
+            if (number >= 1 && number <= 50) {
+                result.textContent = `🎉 Message mystique : ${responses[number]} 🎉`;
+                result.classList.add('show');
+                
+                // Effet de confettis
+                createConfetti();
+            } else {
+                result.textContent = "⚠️ Choisissez un numéro entre 1 et 50";
+                result.classList.add('show');
+            }
+        }
+
+        function createConfetti() {
+            for(let i = 0; i < 50; i++) {
                 const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.left = x + 'px';
-                confetti.style.top = y + 'px';
+                confetti.style.position = 'fixed';
+                confetti.style.width = '10px';
+                confetti.style.height = '10px';
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}deg, 100%, 50%)`;
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-10px';
+                confetti.style.borderRadius = '50%';
+                confetti.style.pointerEvents = 'none';
                 document.body.appendChild(confetti);
 
-                const angle = Math.random() * Math.PI * 2;
-                const velocity = 5 + Math.random() * 5;
-                const dx = Math.cos(angle) * velocity;
-                const dy = Math.sin(angle) * velocity;
-
-                let opacity = 1;
-                const animate = () => {
-                    confetti.style.left = (parseFloat(confetti.style.left) + dx) + 'px';
-                    confetti.style.top = (parseFloat(confetti.style.top) + dy) + 'px';
-                    opacity -= 0.02;
-                    confetti.style.opacity = opacity;
-
-                    if (opacity > 0) {
-                        requestAnimationFrame(animate);
-                    } else {
-                        confetti.remove();
-                    }
-                };
-                requestAnimationFrame(animate);
-            }
-        }
-
-        const grid = document.querySelector('.number-grid');
-        const result = document.querySelector('.result');
-        const resetBtn = document.querySelector('.reset-btn');
-
-        // Créer les boutons numérotés
-        for (let i = 1; i <= 30; i++) {
-            const btn = document.createElement('button');
-            btn.className = 'number';
-            btn.textContent = i;
-            grid.appendChild(btn);
-        }
-
-        // Gérer les clics sur les numéros
-        grid.addEventListener('click', (e) => {
-            if (e.target.classList.contains('number')) {
-                const number = parseInt(e.target.textContent);
-                const rect = e.target.getBoundingClientRect();
-                createConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2);
-
-                result.textContent = `🌟 Bravooh!!! ${responses[number]} ! 🌟`;
-                result.style.display = 'block';
-                result.classList.add('animate', 'show');
-                resetBtn.style.display = 'block';
-                resetBtn.classList.add('show');
-                
-                document.querySelectorAll('.number').forEach(btn => {
-                    btn.style.pointerEvents = 'none';
-                    btn.style.opacity = '0.5';
-                    btn.style.transform = 'scale(0.95)';
+                const animation = confetti.animate([
+                    { transform: 'translateY(0) rotate(0)', opacity: 1 },
+                    { transform: `translateY(100vh) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+                ], {
+                    duration: Math.random() * 2000 + 1000,
+                    easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
                 });
-                e.target.style.opacity = '1';
-                e.target.style.transform = 'scale(1.1) translateY(-5px)';
-                e.target.style.background = 'rgba(255, 255, 255, 0.4)';
-            }
-        });
 
-        resetBtn.addEventListener('click', () => {
-            result.style.display = 'none';
-            result.classList.remove('show');
-            resetBtn.style.display = 'none';
-            resetBtn.classList.remove('show');
-            document.querySelectorAll('.number').forEach(btn => {
-                btn.style.pointerEvents = 'auto';
-                btn.style.opacity = '1';
-                btn.style.transform = 'none';
-                btn.style.background = 'rgba(255, 255, 255, 0.2)';
-            });
+                animation.onfinish = () => confetti.remove();
+            }
+        }
+
+        // Initialisation
+        createStars();
+        createNumbersGrid();
+
+        // Permettre l'utilisation de la touche Entrée
+        document.getElementById('numberInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                revealDestiny();
+            }
         });
     </script>
 </body>
